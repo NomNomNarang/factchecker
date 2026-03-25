@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
@@ -23,7 +22,9 @@ logger = logging.getLogger(__name__)
 
 # Env setup
 N8N_WEBHOOK_URL = os.environ.get('N8N_WEBHOOK_URL')
-USE_LOCAL = N8N_WEBHOOK_URL is None
+
+# 🔥 FIXED LOGIC (important)
+USE_LOCAL = not N8N_WEBHOOK_URL or "localhost" in N8N_WEBHOOK_URL
 
 
 @app.route('/api/', methods=['GET'])
@@ -46,7 +47,7 @@ def fact_check():
 
         logger.info(f"Checking claim: {claim_text[:100]}")
 
-        # 🔥 FALLBACK when n8n not available (Render case)
+        # 🔥 FALLBACK (for Render / no n8n)
         if USE_LOCAL:
             return jsonify({
                 "result": {
@@ -56,7 +57,7 @@ def fact_check():
                 }
             }), 200
 
-        # 🔥 Normal n8n call (local case)
+        # 🔥 ACTUAL n8n call (only if valid URL exists)
         response = requests.post(
             N8N_WEBHOOK_URL,
             json={"text": claim_text},
@@ -86,5 +87,4 @@ def fact_check():
 
 if __name__ == "__main__":
     app.run()
-
 
