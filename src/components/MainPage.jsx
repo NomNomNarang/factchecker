@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 
-const API = "http://localhost:8001/api";
+const API = "https://factchecker-iygo.onrender.com/api";
 
 const EXAMPLE_CLAIMS = [
   "Earth is flat",
